@@ -4,7 +4,7 @@ import {
   UserAddress,
   UserFullName,
 } from './userManagement/user.interface';
-
+import validator from 'validator';
 const UserFullNameSchema = new Schema<UserFullName>({
   firstName: {
     type: String,
@@ -61,7 +61,13 @@ const userSchema = new Schema<User>({
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'email is required!!'],
+    unique: true,
+    trim: true,
+    validate: {
+      validator: (value: string) => validator.isEmail(value),
+      message: '{VALUE} is not valid',
+    },
   },
   isActive: {
     type: Boolean,

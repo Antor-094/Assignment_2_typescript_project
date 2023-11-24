@@ -27,9 +27,26 @@ const createUser = async (req: Request, res: Response) => {
     }
 }
 
+const getAllUser = async (req: Request, res: Response) => {
+    try {
+        const result = await userServices.getAllUserFromDB()
+        res.status(200).json({
+            success: true,
+            message: 'All the user get successfully',
+            data: result,
+        });
 
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Something went wrong',
+            error: error,
+        });
+    }
+}
 
 
 export const userController ={
-    createUser
+    createUser,
+    getAllUser
 }
