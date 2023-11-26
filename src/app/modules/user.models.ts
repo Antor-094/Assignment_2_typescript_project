@@ -5,11 +5,11 @@ import {
   TUserFullName,
   UserMethods,
   UserModel,
-
 } from './userManagement/user.interface';
 import validator from 'validator';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 import config from '../config';
+
 const TUserFullNameSchema = new Schema<TUserFullName>({
   firstName: {
     type: String,
@@ -87,36 +87,55 @@ const userSchema = new Schema<TUser, UserModel, UserMethods>({
     type: TUserAddressSchema,
     required: [true, 'Address is requied'],
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+//document middleware
+userSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this;
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
+
+userSchema.post('save', function (doc, next) {
+  doc.password = '';
+
+  next();
+});
+
+//query middleware
+
+userSchema.pre('find', function (next) {
+  
+  this.find({isDeleted:{$ne:true}})
+  next();
 });
 
 
-//document middleware
-userSchema.pre('save',async function(next){
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this
-  user.password=await bcrypt.hash(user.password,Number(config.bcrypt_salt_rounds));
+userSchema.pre('findOne',function(next){
+  this.find({isDeleted:{$ne:true}})
   next();
+
 })
 
-userSchema.post('save',function(doc,next){
-  doc.password='';
-
-  next();
-  
-})
-
-
-//query middleware 
-
-userSchema.pre('find',function(next){
-  console.log(this)
+//aggregate middleware
+userSchema.pre('aggregate',function(next){
+  this.pipeline().unshift({$match:{isDeleted:{$ne:true}}})
   next()
 })
 
-
-userSchema.methods.isUserExists = async function (userId: number): Promise<boolean> {
+userSchema.methods.isUserExists = async function (
+  userId: number,
+): Promise<boolean> {
   const existingUser = await User.findOne({ userId });
   return !!existingUser; // Return true if user exists, false otherwise
 };
 
-export const User = model<TUser , UserModel>('user', userSchema);
+export const User = model<TUser, UserModel>('user', userSchema);

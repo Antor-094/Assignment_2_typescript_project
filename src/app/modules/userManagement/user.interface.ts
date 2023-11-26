@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import { Model } from 'mongoose';
 
 export type TUserFullName = {
   firstName: string;
@@ -20,11 +20,11 @@ export type TUser = {
   isActive: boolean;
   hobbies: string[];
   address: TUserAddress;
+  isDeleted: boolean;
 };
-
 
 export type UserMethods = {
   isUserExists(userId: number): Promise<boolean>;
 };
 
-export type UserModel = Model<TUser, Record<string, never>, UserMethods>
+export type UserModel = Model<TUser, Record<string, never>, UserMethods>;
