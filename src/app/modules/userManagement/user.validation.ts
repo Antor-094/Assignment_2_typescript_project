@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const UserFullNameValidationSchema = z.object({
+const TUserFullNameValidationSchema = z.object({
     firstName: z
         .string()
         .min(1)
@@ -13,7 +13,7 @@ const UserFullNameValidationSchema = z.object({
     }),
 });
 
-const UserAddressValidationSchema = z.object({
+const TUserAddressValidationSchema = z.object({
     street: z.string().min(1),
     city: z.string().min(1),
     country: z.string().min(1),
@@ -23,12 +23,12 @@ const UserValidationSchema = z.object({
     userId: z.number().refine(value => value !== undefined, { message: 'User ID is required' }),
     username: z.string().refine(value => value !== undefined, { message: 'Username is required' }),
     password: z.string().refine(value => value !== undefined, { message: 'Password is required' }),
-    fullName: UserFullNameValidationSchema,
+    fullName: TUserFullNameValidationSchema,
     age: z.number().refine(value => value !== undefined, { message: 'Age is required' }),
     email: z.string().email(),
     isActive: z.boolean().refine(value => value !== undefined, { message: 'isActive is required' }),
     hobbies: z.array(z.string()).refine(value => value !== undefined && value.length > 0, { message: 'Hobbies are required' }),
-    address: UserAddressValidationSchema,
+    address: TUserAddressValidationSchema,
 });
 
 export default UserValidationSchema;

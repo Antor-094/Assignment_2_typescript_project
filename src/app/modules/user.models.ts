@@ -1,11 +1,14 @@
 import { Schema, model } from 'mongoose';
 import {
-  User,
-  UserAddress,
-  UserFullName,
+  TUser,
+  TUserAddress,
+  TUserFullName,
+  UserMethods,
+  UserModel,
+
 } from './userManagement/user.interface';
 import validator from 'validator';
-const UserFullNameSchema = new Schema<UserFullName>({
+const TUserFullNameSchema = new Schema<TUserFullName>({
   firstName: {
     type: String,
     required: true,
@@ -18,7 +21,7 @@ const UserFullNameSchema = new Schema<UserFullName>({
   },
 });
 
-const UserAddressSchema = new Schema<UserAddress>({
+const TUserAddressSchema = new Schema<TUserAddress>({
   street: {
     type: String,
     required: true,
@@ -36,7 +39,7 @@ const UserAddressSchema = new Schema<UserAddress>({
   },
 });
 
-const userSchema = new Schema<User>({
+const userSchema = new Schema<TUser, UserModel, UserMethods>({
   userId: {
     type: Number,
     required: true,
@@ -52,8 +55,8 @@ const userSchema = new Schema<User>({
     required: true,
   },
   fullName: {
-    type: UserFullNameSchema,
-    required: [true ,'Full name is requied'],
+    type: TUserFullNameSchema,
+    required: [true, 'Full name is requied'],
   },
   age: {
     type: Number,
@@ -78,9 +81,14 @@ const userSchema = new Schema<User>({
     required: true,
   },
   address: {
-    type: UserAddressSchema,
-    required: [true,'Address is requied'],
+    type: TUserAddressSchema,
+    required: [true, 'Address is requied'],
   },
 });
 
-export const UserModel = model<User>('user', userSchema);
+userSchema.methods.isUserExists = async function (userId: number): Promise<boolean> {
+  const existingUser = await User.findOne({ userId });
+  return !!existingUser; // Return true if user exists, false otherwise
+};
+
+export const User = model<TUser , UserModel>('user', userSchema);

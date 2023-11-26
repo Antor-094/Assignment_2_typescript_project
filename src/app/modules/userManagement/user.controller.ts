@@ -7,9 +7,9 @@ import { userServices } from "./user.services";
 
 const createUser = async (req: Request, res: Response) => {
     try {
-        const userData  = req.body
-
+        const userData = req.body
         const zodParsedData = UserValidationSchema.parse(userData)
+
 
         const result = await userServices.createUserIntoDB(zodParsedData)
         res.status(200).json({
@@ -21,7 +21,7 @@ const createUser = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: 'Something went wrong',
+            message: "Duplicate value is not accepted",
             error: error,
         });
     }
@@ -47,7 +47,7 @@ const getAllUser = async (req: Request, res: Response) => {
 
 const getSingleUser = async (req: Request, res: Response) => {
     try {
-        const id = req.params.userId 
+        const id = req.params.userId
         const result = await userServices.getSingleUserFromDB(parseInt(id))
         res.status(200).json({
             success: true,
@@ -55,16 +55,19 @@ const getSingleUser = async (req: Request, res: Response) => {
             data: result,
         });
 
-    } catch (error) {
+    } catch (error:any) {
         res.status(500).json({
             success: false,
-            message: 'Something went wrong',
-            error: error,
+            message: error.message || 'Something went wrong',
+            error: {
+                code: error.code || 500, 
+                description: error.description || 'User not found!',
+            },
         });
     }
 }
 
-export const userController ={
+export const userController = {
     createUser,
     getAllUser,
     getSingleUser
