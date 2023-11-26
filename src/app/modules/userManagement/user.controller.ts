@@ -16,7 +16,7 @@ const createUser = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: 'Duplicate value is not accepted',
+            message: 'Something went wrong',
             error: error,
         });
     }
@@ -30,6 +30,7 @@ const getAllUser = async (req: Request, res: Response) => {
             message: 'Users fetched successfully!',
             data: result,
         });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         res.status(500).json({
             success: false,
@@ -48,6 +49,7 @@ const getSingleUser = async (req: Request, res: Response) => {
             message: 'User fetched successfully!',
             data: result,
         });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         res.status(500).json({
             success: false,
@@ -73,6 +75,7 @@ const updateASingleUser = async (req: Request, res: Response) => {
             message: 'User updated successfully!',
             data: result,
         });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         res.status(500).json({
             success: false,
@@ -93,6 +96,7 @@ const deleteAUser = async (req: Request, res: Response) => {
             message: 'User deleted successfully!',
             data: result.upsertedId
         });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         res.status(500).json({
             success: false,
@@ -111,12 +115,13 @@ const addProductToOrder = async (req: Request, res: Response) => {
         const userId = req.params.userId
         const orderData = req.body
         // console.log(userId,orderData)
-        const result = await userServices.addProductToOrderDB(parseInt(userId), orderData)
+        await userServices.addProductToOrderDB(parseInt(userId), orderData)
         res.status(200).json({
             success: true,
             message: "Order created successfully!",
             data: null
         })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         res.status(500).json({
             success: false,
@@ -139,6 +144,7 @@ const retrieveOrdersOfaSingleUser = async (req: Request, res: Response) => {
             message: "Order fetched successfully!",
             data: result
         })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         res.status(500).json({
             success: false,
@@ -163,6 +169,7 @@ const getTotalPriceForAnUsersOrder = async (req: Request, res: Response) => {
                 "total-price":result
             }
         })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         res.status(500).json({
             success: false,
