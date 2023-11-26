@@ -8,6 +8,8 @@ import {
 
 } from './userManagement/user.interface';
 import validator from 'validator';
+import bcrypt from 'bcrypt'
+import config from '../config';
 const TUserFullNameSchema = new Schema<TUserFullName>({
   firstName: {
     type: String,
@@ -85,6 +87,21 @@ const userSchema = new Schema<TUser, UserModel, UserMethods>({
     required: [true, 'Address is requied'],
   },
 });
+
+
+
+userSchema.pre('save',async function(next){
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this
+  user.password=await bcrypt.hash(user.password,Number(config.bcrypt_salt_rounds));
+  next();
+})
+
+userSchema.post('save',function(){
+  console.log(this,"we just save data!!")
+  
+})
+
 
 userSchema.methods.isUserExists = async function (userId: number): Promise<boolean> {
   const existingUser = await User.findOne({ userId });
