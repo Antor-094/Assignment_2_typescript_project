@@ -55,6 +55,7 @@ const userSchema = new Schema<TUser, UserModel, UserMethods>({
   password: {
     type: String,
     required: true,
+    select: false,
   },
   fullName: {
     type: TUserFullNameSchema,
@@ -89,7 +90,7 @@ const userSchema = new Schema<TUser, UserModel, UserMethods>({
 });
 
 
-
+//document middleware
 userSchema.pre('save',async function(next){
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this
@@ -97,9 +98,19 @@ userSchema.pre('save',async function(next){
   next();
 })
 
-userSchema.post('save',function(){
-  console.log(this,"we just save data!!")
+userSchema.post('save',function(doc,next){
+  doc.password='';
+
+  next();
   
+})
+
+
+//query middleware 
+
+userSchema.pre('find',function(next){
+  console.log(this)
+  next()
 })
 
 

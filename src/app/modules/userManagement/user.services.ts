@@ -1,3 +1,4 @@
+import { UpdateQuery } from "mongoose";
 import { User} from "../user.models";
 import { TUser } from "./user.interface";
 
@@ -10,7 +11,7 @@ const createUserIntoDB = async (userData: TUser) => {
   };
 
 const getAllUserFromDB = async ()=>{
-  const result = await User.find()
+  const result = await User.find().select('-password')
   return result;
 }
 
@@ -22,11 +23,20 @@ const getSingleUserFromDB = async (userId:number)=>{
   if (!userExists) {
     throw new Error('User not found');
   }
- const result = await User.findOne({userId});
+ const result = await User.findOne({userId}).select("-password");
  return result;
+}
+
+
+const updateASingleUserFromDB = async (userId:number,updatedData: UpdateQuery<TUser> | undefined)=>{
+
+  const result = await User.findOneAndUpdate({userId},updatedData,{new:true})
+  return result
+
 }
   export const userServices = {
     createUserIntoDB,
     getAllUserFromDB,
-    getSingleUserFromDB
+    getSingleUserFromDB,
+    updateASingleUserFromDB
   }
