@@ -1,6 +1,6 @@
 import { UpdateQuery } from 'mongoose';
 import { User } from '../user.models';
-import { TUser } from './user.interface';
+import { TOrder, TUser } from './user.interface';
 
 const createUserIntoDB = async (userData: TUser) => {
   const result = await User.create(userData);
@@ -49,10 +49,29 @@ const deleteAUserFromDB = async (userId: number) => {
   const result = await User.updateOne({ userId }, { isDeleted: true });
   return result;
 };
+
+const addProductToOrderDB = async (userId: number,orderData:TOrder) => {
+  const user = new User();
+  const userExists = await user.isUserExists(userId);
+
+  if (!userExists) {
+    throw new Error('User not found')
+  }
+  const result = await User.findOneAndUpdate(
+    { userId },
+    { $push: { orders: orderData } },
+    { new: true }
+  );
+ console.log(result)
+  return result;
+}
+
+
 export const userServices = {
   createUserIntoDB,
   getAllUserFromDB,
   getSingleUserFromDB,
   updateASingleUserFromDB,
   deleteAUserFromDB,
+  addProductToOrderDB
 };

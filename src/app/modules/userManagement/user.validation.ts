@@ -1,4 +1,9 @@
 import { z } from 'zod';
+const TOrderValidationSchema = z.object({
+  productName: z.string().min(2),
+  price: z.number(),
+  quantity: z.number(),
+});
 
 const TUserFullNameValidationSchema = z.object({
   firstName: z
@@ -55,7 +60,8 @@ const UserValidationSchema = z.object({
       message: 'Hobbies are required',
     }),
   address: TUserAddressValidationSchema,
-  isDeleted: z.boolean().default(false)
+  isDeleted: z.boolean().default(false),
+  orders: z.array(TOrderValidationSchema).optional(),
 });
 
 export default UserValidationSchema;

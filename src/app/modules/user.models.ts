@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose';
 import {
+  TOrder,
   TUser,
   TUserAddress,
   TUserFullName,
@@ -10,6 +11,21 @@ import validator from 'validator';
 import bcrypt from 'bcrypt';
 import config from '../config';
 
+const orderSchema = new Schema<TOrder>({
+  productName: {
+    type: String,
+    required: [true,'Product Name is required'],
+    trim: true,
+  },
+  price: {
+    type: Number,
+    required: [true,'Product price is required'],
+  },
+  quantity: {
+    type: Number,
+    required: [true,'Product Quantity is required'],
+  },
+});
 const TUserFullNameSchema = new Schema<TUserFullName>({
   firstName: {
     type: String,
@@ -91,6 +107,9 @@ const userSchema = new Schema<TUser, UserModel, UserMethods>({
     type: Boolean,
     default: false,
   },
+  orders:{
+    type:[orderSchema],
+  }
 });
 
 //document middleware
